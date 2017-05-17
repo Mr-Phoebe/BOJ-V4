@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
+from .models import ContestSubmission
 from .models import Contest, ContestProblem, Clarification, ContestNotification
 
 
-class UserSerializer(serializers.Serializer):
+class ContestSubmissionSerializer(serializers.HyperlinkedModelSerializer):
 
     pk = serializers.IntegerField()
+    code = serializers.CharField(max_length=30)
     nickname = serializers.CharField(max_length=30)
     score = serializers.IntegerField(default=0)
     ac_sub = serializers.DictField(child=serializers.IntegerField())
@@ -14,6 +16,7 @@ class UserSerializer(serializers.Serializer):
 
     def toJson(self):
         return JSONRenderer().render(self.data)
+
 
 class ContestSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
