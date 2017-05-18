@@ -37,11 +37,7 @@ from rest_framework.request import Request
 
 class ContestViewPermission(BasePermission):
 
-    def has_permission(self, request, view):
-        print "xxxxxxxxxxxx"
-
     def has_object_permission(self, request, view, obj):
-        print "permission"
         if not isinstance(obj, Contest):
             return False
         if request.user.has_perm('ojuser.change_groupprofile', obj.group):
@@ -73,6 +69,11 @@ class SubmissionPermission(BasePermission):
         return request.user.has_perm('ojuser.change_groupprofile', group)
 
 
+def check_permission(user, contest):
+    if not user.has_perm('ojuser.view_groupprofile', contest.group):
+        raise Http404()
+
+
 class ContestViewSet(ModelViewSet):
     queryset = Contest.objects.all()
     permission_classes = (IsAuthenticated, ContestViewPermission)
@@ -96,6 +97,7 @@ class ContestViewSet(ModelViewSet):
         lock = str(contest.pk) + "__lock"
         if cache.get(lock):
             res = cache.get(contest.key())
+            print "cache: ", res
             return Response(res)
         cache.set(lock, 1, CONTEST_CACHE_FLUSH_TIME)
 
@@ -166,7 +168,8 @@ class ContestViewSet(ModelViewSet):
             info.sort(key=lambda x: x['AC']*1000000-x['pen'], reverse=True)
         else:
             info.sort(key=lambda x: x['pen'], reverse=True)
-        cache.set(contest.key(), info, CONTEST_CACHE_EXPIRE_TIME)
+        cache.set(contest.key(), json.dumps(info), CONTEST_CACHE_EXPIRE_TIME)
+        print info
         return Response(info)
 
 
@@ -267,6 +270,7 @@ class ContestDetailView(DetailView):
     @method_decorator(login_required)
     def dispatch(self, request, pk=None, *args, **kwargs):
         # self.object = get_object_or_404(self.get_queryset(), pk=pk)
+        check_permission(request.user, self.get_object())
         return super(ContestDetailView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -285,6 +289,7 @@ class ProblemDetailView(DetailView):
 
     @method_decorator(login_required)
     def dispatch(self, request, pk=None, *args, **kwargs):
+        check_permission(request.user, self.get_object())
         index = kwargs.get('index', '#')
         self.problem = ContestProblem.objects.filter(contest__pk=pk, index=index).first()
         if not self.problem:
@@ -348,7 +353,8 @@ class BoardView(DetailView):
 
     @method_decorator(login_required)
     def dispatch(self, request, pk=None, *args, **kwargs):
-        self.contest = Contest.objects.filter(pk=pk).first()
+        self.contest = self.get_object()
+        check_permission(request.user, self.contest)
         return super(BoardView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -441,6 +447,7 @@ class SubmissionCreateView(DetailView):
     def dispatch(self, request, pk=None, *args, **kwargs):
         self.index = request.GET.get('index', None)
         self.contest = self.get_object()
+        check_permission(request.user, self.contest)
 
         return super(SubmissionCreateView, self).dispatch(request, *args, **kwargs)
 
