@@ -58,7 +58,7 @@ def view_permission_required(func):
             pk = kwargs.get('pk')
             contest = Contest.objects.filter(pk=pk).first()
             if pk and contest:
-                if request.user.has_perm('ojuser.view_groupprofile', contest.group) and contest.ended() == 0:
+                if request.user.has_perm('ojuser.view_groupprofile', contest.group) and contest.ended() >= 0:
                     return func(request, *args, **kwargs)
                 elif request.user.has_perm('ojuser.change_groupprofile', contest.group):
                     return func(request, *args, **kwargs)
@@ -90,6 +90,7 @@ class ContestViewSet(ModelViewSet):
                 _('Contest has ended.')
             )
             return Response({'code': -1})
+
         send_to_nsq('submit', json.dumps(request.data))
         messages.add_message(
             self.request._request,
@@ -277,7 +278,6 @@ class ContestDetailView(DetailView):
     @method_decorator(view_permission_required)
     def dispatch(self, request, *args, **kwargs):
         # self.object = get_object_or_404(self.get_queryset(), pk=pk)
-        check_permission(request.user, self.get_object())
         return super(ContestDetailView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -297,7 +297,6 @@ class ProblemDetailView(DetailView):
     @method_decorator(login_required)
     @method_decorator(view_permission_required)
     def dispatch(self, request, pk=None, *args, **kwargs):
-        check_permission(request.user, self.get_object())
         index = kwargs.get('index', '#')
         self.problem = ContestProblem.objects.filter(contest__pk=pk, index=index).first()
         if not self.problem:
@@ -363,7 +362,6 @@ class BoardView(DetailView):
     @method_decorator(view_permission_required)
     def dispatch(self, request, pk=None, *args, **kwargs):
         self.contest = self.get_object()
-        check_permission(request.user, self.contest)
         return super(BoardView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

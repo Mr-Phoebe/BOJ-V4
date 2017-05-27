@@ -59,9 +59,7 @@ def submission_handler(message):
             case.running_time = mp.get('time', 0)
             case.running_memory = mp.get('memory', 0)
             case.status = status
-            print "============create=========="
             case.save()
-            print "============create success, pk is ", case.pk
             if status == 'AC':
                 sub.score += sub.problem.get_score(position)
                 sub.save()

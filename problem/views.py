@@ -91,6 +91,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
         try:
             res = self.update(request, *args, **kwargs)
         except Exception as ex:
+            print ex
             return Response({'code': -1, 'msg': str(ex)})
         return Response({'code': 0, 'msg': 'xixi'})
 

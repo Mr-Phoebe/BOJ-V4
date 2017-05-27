@@ -15,6 +15,9 @@ def handler(message):
     mp = json.loads(message.body)
     r = requests.post(url, data=json.dumps({
         "submission-id": mp['submission_id'],
+        'position': 0,
+        'time': 0,
+        'memory': 0,
         "status": 'AC',
     }))
     print r.text
