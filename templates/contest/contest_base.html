@@ -1,7 +1,6 @@
 {% extends "site_base.html" %}
 {% block head_title %}{{ contest.title }}{% endblock %}
 {% block body %}
-    <section class="jumbotron">
 <div class="page-header">
     <Meta http-equiv="Refresh" Content="50;">
     {%if is_admin %}
@@ -24,6 +23,7 @@
         {% endif %}
     {% endblock %}
 </div>
+
 <ul class="nav nav-pills">
     <li id="contest_home"><a href="{% url "contest:contest-detail" contest.pk %}">测验首页</a></li>
     <li id="contest_submit"><a href="{% url "contest:submission-add" contest.pk %}">提交代码</a></li>
@@ -50,7 +50,6 @@
     <div class="container" id="wrapper">
 {% block contest_body %} {% endblock contest_body %}
   </div>
-    </section>
     <script src="{{ STATIC_URL }}js/jquery-2.1.1.js"></script>
     {% block script_extra %} {% endblock %}
 {% endblock %}
