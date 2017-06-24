@@ -10,16 +10,13 @@ from .forms import ContestForm, SubmissionForm, NotificationForm, QuestionForm, 
 from .serializers import ContestSubmissionSerializer
 
 from problem.models import Problem
-from submission.models import Submission
 from bojv4.conf import LANGUAGE_MASK, CONTEST_TYPE, CONTEST_CACHE_EXPIRE_TIME, CONTEST_CACHE_FLUSH_TIME
 from common.nsq_client import send_to_nsq
 
 from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _

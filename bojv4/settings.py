@@ -153,6 +153,7 @@ INSTALLED_APPS = [
     "submission",
     "common",
     "contest",
+    "cheat",
 ]
 
 # A sample logging configuration. The only tangible logging
