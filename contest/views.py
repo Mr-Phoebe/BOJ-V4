@@ -96,6 +96,25 @@ class ContestViewSet(ModelViewSet):
         )
         return Response({'code': 0})
 
+    @detail_route(methods=['get'], url_path='cheat')
+    def cheat(self, request, pk=None):
+        if self.get_object().ended() != 1:
+            messages.add_message(
+                self.request._request,
+                messages.ERROR,
+                _('Contest has not ended.')
+            )
+            return Response({'code': -1})
+
+        for p in self.get_object().problems.all():
+            send_to_nsq('cheat', str(p.pk))
+        messages.add_message(
+            self.request._request,
+            messages.SUCCESS,
+            _('cheat has started')
+        )
+        return Response({'code': 0})
+
     @detail_route(methods=['get'], url_path='board')
     def get_contest_board(self, request, pk=None):
         contest = self.get_object()
@@ -397,7 +416,7 @@ class ContestUpdateView(UpdateView):
         problem_pks = []
         for i in range(len(problem_list)):
             p = Problem.objects.filter(pk=problem_list[i]).first()
-            cp = ContestProblem.objects.filter(contest=self.object, index=pindex).first()
+            cp = ContestProblem.objects.filter(contest=self.object, index=pindex[i]).first()
             if not cp:
                 cp = ContestProblem()
             cp.problem = p

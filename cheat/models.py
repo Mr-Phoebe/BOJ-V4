@@ -36,11 +36,11 @@ class RecordFilter(django_filters.FilterSet):
 
 class RecordTable(tables.Table):
     problem = tables.LinkColumn('contest:problem-detail', args=[A('problem.contest.pk'), A('problem.index')], accessor='problem.index')
-    sub1 = tables.LinkColumn('contest:submission-detail', args=[A('sub1.pk'), ], accessor='sub1.pk')
+    sub1 = tables.LinkColumn('contest:submission-detail', args=[A('problem.contest.pk'), A('sub1.pk'), ], accessor='sub1.pk')
     user1 = tables.Column()
-    sub2 = tables.LinkColumn('contest:submission-detail', args=[A('sub2.pk'), ], accessor='sub2.pk')
+    sub2 = tables.LinkColumn('contest:submission-detail', args=[A('problem.contest.pk'), A('sub2.pk')], accessor='sub2.pk')
     user2 = tables.Column()
-    probability = tables.LinkColumn('cheat:record-detail', args=[A('problem.contest.pk'), A('problem.index')])
+    probability = tables.LinkColumn('cheat:record-detail', args=[A('problem.contest.pk'), A('pk')])
 
     class Meta:
         model = Record

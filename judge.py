@@ -80,7 +80,6 @@ def submit_handler(message):
     print 'cheat=================',  message.body
     try:
         mp = json.loads(message.body)
-        print mp
         s = ContestSubmission()
         s.problem = ContestProblem.objects.get(pk=int(mp['problem']))
         sub = Submission()
