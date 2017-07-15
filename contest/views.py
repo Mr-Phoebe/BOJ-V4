@@ -12,6 +12,7 @@ from .serializers import ContestSubmissionSerializer
 from problem.models import Problem
 from bojv4.conf import LANGUAGE_MASK, CONTEST_TYPE, CONTEST_CACHE_EXPIRE_TIME, CONTEST_CACHE_FLUSH_TIME
 from common.nsq_client import send_to_nsq
+from cheat.models import Record
 
 from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.core.urlresolvers import reverse
@@ -112,6 +113,17 @@ class ContestViewSet(ModelViewSet):
             self.request._request,
             messages.SUCCESS,
             _('cheat has started')
+        )
+        return Response({'code': 0})
+
+    @detail_route(methods=['get'], url_path='clear')
+    def clear_record(self, request, pk=None):
+        for p in self.get_object().problems.all():
+            p.cheat.all().delete()
+        messages.add_message(
+            self.request._request,
+            messages.SUCCESS,
+            _('cheat record has been cleaned')
         )
         return Response({'code': 0})
 

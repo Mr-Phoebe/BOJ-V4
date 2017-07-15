@@ -40,9 +40,10 @@
         }, "json");
     }
     function clear_record() {
-        $.get("/api/contest/{{ contest.pk }}/clear_record/", function (result) {
+        $.get("/api/contest/{{ contest.pk }}/clear/", function (result) {
             if (result.code == 0) {
                 alert("cheat record has cleared");
+                location.reload();
             }
             else{
                 alert(result.msg);
