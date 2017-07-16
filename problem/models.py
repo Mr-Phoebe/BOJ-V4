@@ -118,21 +118,14 @@ class Problem(models.Model):
         resp = []
         p_count = 0
         for cas in self.cases.all():
-            in_data = {
-                    'filename': cas.input_data.sha1,
-                    'path': '/' + cas.input_data.path.lstrip(BASE_DIR)
-                    }
-            out_data = {
-                    'filename': cas.output_data.sha1,
-                    'path': '/' + cas.output_data.path.lstrip(BASE_DIR)
-                    }
+            in_data = cas.input_data.path
+            out_data = cas.output_data.path
             resp.append({
                 'in': in_data,
                 'out': out_data,
                 'position': p_count
                 })
-            p_count += 0
-            print in_data['path']
+            p_count += 1
         return resp
 
     def get_position_data(self, position):

@@ -80,7 +80,6 @@ def submit_handler(message):
     print 'cheat=================',  message.body
     try:
         mp = json.loads(message.body)
-        print mp
         s = ContestSubmission()
         s.problem = ContestProblem.objects.get(pk=int(mp['problem']))
         sub = Submission()
@@ -98,9 +97,7 @@ def submit_handler(message):
 
 
 if __name__ == '__main__':
-    print "start run"
     NsqQueue.add_callback(handler=submission_handler, topic='submission', channel='123456')
     NsqQueue.add_callback(handler=submit_handler, topic='submit', channel='adfasdf')
-    print "end add"
     NsqQueue.start()
 

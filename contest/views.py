@@ -10,16 +10,14 @@ from .forms import ContestForm, SubmissionForm, NotificationForm, QuestionForm, 
 from .serializers import ContestSubmissionSerializer
 
 from problem.models import Problem
-from submission.models import Submission
 from bojv4.conf import LANGUAGE_MASK, CONTEST_TYPE, CONTEST_CACHE_EXPIRE_TIME, CONTEST_CACHE_FLUSH_TIME
 from common.nsq_client import send_to_nsq
+from cheat.models import Record
 
 from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -96,6 +94,36 @@ class ContestViewSet(ModelViewSet):
             self.request._request,
             messages.SUCCESS,
             _('Submit Success')
+        )
+        return Response({'code': 0})
+
+    @detail_route(methods=['get'], url_path='cheat')
+    def cheat(self, request, pk=None):
+        if self.get_object().ended() != 1:
+            messages.add_message(
+                self.request._request,
+                messages.ERROR,
+                _('Contest has not ended.')
+            )
+            return Response({'code': -1})
+
+        for p in self.get_object().problems.all():
+            send_to_nsq('cheat', str(p.pk))
+        messages.add_message(
+            self.request._request,
+            messages.SUCCESS,
+            _('cheat has started')
+        )
+        return Response({'code': 0})
+
+    @detail_route(methods=['get'], url_path='clear')
+    def clear_record(self, request, pk=None):
+        for p in self.get_object().problems.all():
+            p.cheat.all().delete()
+        messages.add_message(
+            self.request._request,
+            messages.SUCCESS,
+            _('cheat record has been cleaned')
         )
         return Response({'code': 0})
 
@@ -400,7 +428,7 @@ class ContestUpdateView(UpdateView):
         problem_pks = []
         for i in range(len(problem_list)):
             p = Problem.objects.filter(pk=problem_list[i]).first()
-            cp = ContestProblem.objects.filter(contest=self.object, index=pindex).first()
+            cp = ContestProblem.objects.filter(contest=self.object, index=pindex[i]).first()
             if not cp:
                 cp = ContestProblem()
             cp.problem = p

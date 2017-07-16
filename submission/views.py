@@ -28,14 +28,6 @@ logger = logging.getLogger('django')
 #  from guardian.shortcuts import get_objects_for_user
 
 
-class SubmissionPermission(BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        if request.user == obj.user:
-            return True
-        return obj.problem.view_by_user(user=request.user)
-
-
 class CaseResultPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):

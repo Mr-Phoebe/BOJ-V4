@@ -4,7 +4,7 @@
 <div class="page-header">
     <Meta http-equiv="Refresh" Content="50;">
     {%if is_admin %}
-    {%if contest.ended == 1 %}<button class="btn btn-inverse pull-right" onclick="postRequest();" id="submit">代码查重</button>{%endif%}
+    {%if contest.ended == 1 %}<a class="btn btn-inverse pull-right" href="{% url 'cheat:record-list' contest.pk %}">代码查重</a>{%endif%}
     <a class="btn pull-right" href="{% url 'contest:add-notification' contest.pk %}">添加公告</a>
     <a class="btn btn-primary pull-right" href="{% url 'contest:update-contest' contest.pk %}">修改测验</a>
     {%else%}
