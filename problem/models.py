@@ -33,7 +33,7 @@ class Problem(models.Model):
     is_spj = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return str(self.title)
+        return self.title
 
     def get_absolute_url(self):
         return reverse('problem:problem-detail', kwargs={'pk': self.pk})

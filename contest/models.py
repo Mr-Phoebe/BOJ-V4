@@ -29,7 +29,7 @@ class Contest(models.Model):
         return self.title
 
     def key(self):
-        return 'contest__' + str(self.pk) + '__' + self.title
+        return 'contest__' + str(self.pk)
 
     @property
     def lang_limited(self):

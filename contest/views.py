@@ -204,7 +204,7 @@ class ContestViewSet(ModelViewSet):
             info.sort(key=lambda x: x['AC']*1000000-x['pen'], reverse=True)
         else:
             info.sort(key=lambda x: x['pen'], reverse=True)
-        cache.set(contest.key(), json.dumps(info), CONTEST_CACHE_EXPIRE_TIME)
+        cache.set(contest.key(), info, CONTEST_CACHE_EXPIRE_TIME)
         return Response(info)
 
 

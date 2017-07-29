@@ -77,7 +77,7 @@ def submission_handler(message):
 
 
 def submit_handler(message):
-    print 'cheat=================',  message.body
+    print 'submit=================',  message.body
     try:
         mp = json.loads(message.body)
         s = ContestSubmission()
