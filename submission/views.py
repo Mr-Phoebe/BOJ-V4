@@ -16,6 +16,7 @@ from django.http import JsonResponse, HttpResponseNotAllowed, Http404, HttpRespo
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models.query import EmptyQuerySet
 from rest_framework.permissions import BasePermission
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_objects_for_user
@@ -53,7 +54,7 @@ class SubmissionListView(ListView):
         for g in groups:
             for p in g.problems.all():
                 ans |= p.submissions.all()
-        res = reduce(lambda x, y : x | y, map(lambda x: x.problems.all(), groups)).distinct()
+        res = reduce(lambda x, y : x | y, map(lambda x: x.problems.all(), groups), Problem.objects.none()).distinct()
         self.submission_can_view_qs = ans.distinct()
         print self.request.GET
         self.filter = SubmissionFilter(
