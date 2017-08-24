@@ -6,7 +6,7 @@ BOJv4
 ### Basic lib
 
 ```
-sudo apt-get install libjpeg-turbo8-dev zlib1g-dev python-pip redis
+sudo apt-get install libjpeg-turbo8-dev zlib1g-dev python-pip redis-server
 ```
 ### Virtual environment
 
