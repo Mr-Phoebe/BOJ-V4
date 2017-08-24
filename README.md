@@ -6,7 +6,7 @@ BOJv4
 ### Basic lib
 
 ```
-sudo apt-get install libjpeg-turbo8-dev zlib1g-dev python-pip
+sudo apt-get install libjpeg-turbo8-dev zlib1g-dev python-pip redis
 ```
 ### Virtual environment
 
@@ -14,14 +14,10 @@ Make sure you are using a virtual environment of some sort (e.g. `virtualenv` or
 `pyenv`).
 
 ```
-cat >> prepare.sh << EOF
 pip install virtualenv
 mkdir BOJ
 cd BOJ
 virtualenv --no-site-packages venv
-EOF
-chmod +x prepare.sh
-./prepare.sh
 ```
 
 ### Clone the project
